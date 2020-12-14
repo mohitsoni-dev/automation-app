@@ -33,6 +33,7 @@ public class BackgroundService extends Service {
 
     @Override
     public void onDestroy() {
+        i = 10000;
         super.onDestroy();
     }
 

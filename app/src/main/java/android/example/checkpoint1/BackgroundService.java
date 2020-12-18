@@ -1,16 +1,26 @@
 package android.example.checkpoint1;
 import android.app.ActivityManager;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +31,43 @@ public class BackgroundService extends Service {
 
     Handler h;
     int i = 0;
+
+    WindowManager wm;
+    ImageView iconImageView;
+
     public static List<String> names = new ArrayList<>();
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         h = new Handler(Looper.myLooper());
-        helper();
+        //helper();
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+
+        wm = (WindowManager) getBaseContext().getSystemService(WINDOW_SERVICE);
+        iconImageView =  new ImageView(getApplicationContext());
+        iconImageView.setImageResource(android.R.drawable.star_big_on);
+
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
+                100,
+                100,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY|
+                WindowManager.LayoutParams.TYPE_APPLICATION,
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|
+
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSLUCENT
+        );
+        layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+        wm.addView(iconImageView, layoutParams);
+
     }
 
     @Override

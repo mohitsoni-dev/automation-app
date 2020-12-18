@@ -11,22 +11,23 @@
         android:layout_width="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="App log is:" />
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonStart"
-        android:text="START SERVICE" />
-    <TextView
-        android:id="@+id/list_view_id"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonStop"
-        android:text="STOP SERVICE" />
+        android:orientation="vertical"
+        android:id="@+id/buttonLinearLayout">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonStart"
+            android:layout_marginTop="10dp"
+            android:text="START SERVICE" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonStop"
+            android:text="STOP SERVICE" />
+    </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

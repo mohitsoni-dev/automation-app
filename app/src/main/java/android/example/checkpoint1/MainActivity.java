@@ -2,7 +2,12 @@ package android.example.checkpoint1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -38,9 +43,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         if (view == start) {
             startService(new Intent(this, BackgroundService.class));
-            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            if (!isAccessGranted()) {
+                startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            }
         } else if (view == stop) {
             stopService(new Intent(this, BackgroundService.class));
+        }
+    }
+
+    private boolean isAccessGranted() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+            int mode = 0;
+            if (Build.VERSION.SDK_INT > 23) {
+                mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            }
+            return mode == AppOpsManager.MODE_ALLOWED;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 }

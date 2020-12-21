@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
                 startService(intent);
+                finish();
             }
             startService(new Intent(this, BackgroundService.class));
             if (!isAccessGranted()) {

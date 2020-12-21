@@ -100,9 +100,20 @@ public class FloatingWindow extends Service {
                         imageClose.setVisibility(View.GONE);
                         layoutParams.x = initialX + (int) (initialTouchX - event.getRawX());
                         layoutParams.y = initialY + (int) (event.getRawY() - initialTouchY);
-                        break;
+
+                        if (layoutParams.y > (height*0.6)) {
+                            stopSelf();
+                        }
+
+                        return true;
                     case MotionEvent.ACTION_MOVE:
-                        break;
+                        layoutParams.x = initialX + (int) (initialTouchX - event.getRawX());
+                        layoutParams.y = initialY + (int) (event.getRawY() - initialTouchY);
+
+                        windowManager.updateViewLayout(mFloatingView, layoutParams);
+
+                            imageClose.setImageResource(R.drawable.close_white_foreground);
+                        return true;
                 }
                 return false;
             }

@@ -22,6 +22,7 @@ public class BackgroundService extends Service {
     Handler h;
     int i = 0;
     public static List<String> names = new ArrayList<>();
+    public static String currentApp = "";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -70,6 +71,7 @@ public class BackgroundService extends Service {
         }
         if(!names.contains(name))
             names.add(name);
+        currentApp = name;
 
         MainActivity.adapter.notifyDataSetChanged();
 

@@ -21,10 +21,29 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button start, stop;
+public class MainActivity extends AppCompatActivity{
     public static ArrayAdapter<String> adapter;
     private ListView listView;
+
+    public void onStartClicked(View view){
+        if (!Settings.canDrawOverlays(MainActivity.this)) {
+            getPermissionForOverlay();
+        }else if (!isAccessGranted()) {
+            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+        }else {
+            Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
+            intent.putExtra("Called", true);
+            this.startService(intent);
+            this.startService(new Intent(this, BackgroundService.class));
+            finish();
+        }
+    }
+
+    public void onStopClicked(View view){
+
+        this.stopService(new Intent(this, BackgroundService.class));
+        this.stopService(new Intent(MainActivity.this, FloatingWindow.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,36 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         startService(new Intent(this, FloatingWindow.class));
 
-        getPermissionForOverlay();
-
-        start = (Button) findViewById(R.id.buttonStart);
-        stop = (Button) findViewById(R.id.buttonStop);
+        //getPermissionForOverlay();
 
         listView = findViewById(R.id.listView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, BackgroundService.names);
         listView.setAdapter(adapter);
-
-        start.setOnClickListener(this);
-        stop.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view == start) {
-            if (!Settings.canDrawOverlays(MainActivity.this)) {
-                getPermissionForOverlay();
-            } else {
-                Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
-                startService(intent);
-                finish();
-            }
-            startService(new Intent(this, BackgroundService.class));
-            if (!isAccessGranted()) {
-                startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-            }
-        } else if (view == stop) {
-            stopService(new Intent(this, BackgroundService.class));
-        }
     }
 
     private boolean isAccessGranted() {

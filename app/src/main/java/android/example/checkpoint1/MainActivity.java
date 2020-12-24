@@ -31,12 +31,20 @@ public class MainActivity extends AppCompatActivity{
         }else if (!isAccessGranted()) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
         }else {
-            Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
-            intent.putExtra("Called", true);
-            this.startService(intent);
+//            Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
+//            intent.putExtra("Called", true);
+//            this.startService(intent);
             this.startService(new Intent(this, BackgroundService.class));
-            finish();
+//            finish();
+            minimizeApp();
         }
+    }
+
+    private void minimizeApp() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     public void onStopClicked(View view){
@@ -49,8 +57,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, FloatingWindow.class));
-
+//        startService(new Intent(this, FloatingWindow.class));
         //getPermissionForOverlay();
 
         listView = findViewById(R.id.listView);

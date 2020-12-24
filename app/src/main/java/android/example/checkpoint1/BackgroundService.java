@@ -21,6 +21,8 @@ public class BackgroundService extends Service {
 
     Handler h;
     int i = 0;
+    public static String prevApp = "";
+
     public static List<String> names = new ArrayList<>();
     public static String currentApp = "";
     @Override
@@ -69,9 +71,26 @@ public class BackgroundService extends Service {
             am = (ActivityManager) getBaseContext().getSystemService(ACTIVITY_SERVICE);
             name = am.getRunningTasks(1).get(0).topActivity .getPackageName();
         }
-        if(!names.contains(name))
+
+        if (!names.contains(name)){
             names.add(name);
-        currentApp = name;
+        }
+
+        prevApp = currentApp;
+
+        // For fixing issues in android < 10
+        if (!name.equals("android"))
+            currentApp = name;
+
+        Intent intent = new Intent(this, FloatingWindow.class);
+        if (currentApp.equals("com.google.android.youtube")) {
+            if (!prevApp.equals(currentApp)) {
+                intent.putExtra("Called", true);
+                this.startService(intent);
+            }
+        } else {
+            this.stopService(intent);
+        }
 
         MainActivity.adapter.notifyDataSetChanged();
 

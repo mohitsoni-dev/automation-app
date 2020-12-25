@@ -92,8 +92,6 @@ public class BackgroundService extends Service {
             this.stopService(intent);
         }
 
-        MainActivity.adapter.notifyDataSetChanged();
-
         if(i<10000)
             h.postDelayed(()-> helper(), 1000);
     }

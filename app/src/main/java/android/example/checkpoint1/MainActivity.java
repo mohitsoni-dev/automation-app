@@ -16,23 +16,30 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity{
-    public static ArrayAdapter<String> adapter;
     public static String APP_SET = "APP_SET";
     public static PackageManager packageManager;
     private RecyclerView recyclerView;
     public static Set<String> appSet;
     SharedPreferences preferences;
     List<ResolveInfo> pkgAppList;
+    public static boolean hasStarted = false;
 
-    public void onStartClicked(View view){
+    public void onOffButton(View view) {
+        if (!hasStarted) {
+            onStartClicked();
+        } else {
+            onStopClicked();
+        }
+        hasStarted = !hasStarted;
+    }
+
+    public void onStartClicked(){
         if (!Settings.canDrawOverlays(MainActivity.this)) {
             getPermissionForOverlay();
         }else if (!isAccessGranted()) {
@@ -44,8 +51,9 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void onAddAppsClicked(View view){
-
-
+        Intent intent = new Intent(this, AddAppActivity.class);
+        intent.putExtra("pkgAppList", pkgAppList);
+        startActivity(intent);
     }
 
     private void minimizeApp() {
@@ -55,10 +63,10 @@ public class MainActivity extends AppCompatActivity{
         startActivity(startMain);
     }
 
-    public void onStopClicked(View view){
-
+    public void onStopClicked(){
         this.stopService(new Intent(this, BackgroundService.class));
         this.stopService(new Intent(MainActivity.this, FloatingWindow.class));
+        Toast.makeText(this, "Service Stopped!", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -84,8 +92,8 @@ public class MainActivity extends AppCompatActivity{
 
             return app1.compareTo(app2);
         });
-        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this, pkgAppList);
-        recyclerView.setAdapter(recyclerViewAdapter);
+//        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this, pkgAppList);
+//        recyclerView.setAdapter(recyclerViewAdapter);
     }
 
     private boolean isAccessGranted() {

@@ -92,6 +92,11 @@ public class BackgroundService extends Service {
             this.stopService(intent);
         }
 
+        /**
+         * TODO:    - remove youtube specificity and generalize this by checking if the name exist in MainActivity.selectedApps
+         *          - baaki tujhe jese acha lage isme aage flow m wese kar lena ni apn kuch kar hi lenge
+         */
+
         if(i<10000)
             h.postDelayed(()-> helper(), 1000);
     }

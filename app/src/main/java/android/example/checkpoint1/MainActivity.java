@@ -16,25 +16,37 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity{
+
     public static String APP_SET = "APP_SET";
     public static PackageManager packageManager;
-    private RecyclerView recyclerView;
+    public static Gson gson;
     public static Set<String> appSet;
-    SharedPreferences preferences;
-    List<ResolveInfo> pkgAppList;
-    public static boolean hasStarted = false;
+    public static SharedPreferences preferences;
+    public static List<ResolveInfo> selectedApps;
+
+    private static boolean hasStarted = false;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private Button startStopButton;
 
     public void onOffButton(View view) {
         if (!hasStarted) {
             onStartClicked();
+            startStopButton.setText("Stop Service");
         } else {
             onStopClicked();
+            startStopButton.setText("Start Service");
         }
         hasStarted = !hasStarted;
     }
@@ -52,8 +64,10 @@ public class MainActivity extends AppCompatActivity{
 
     public void onAddAppsClicked(View view){
         Intent intent = new Intent(this, AddAppActivity.class);
-        intent.putExtra("pkgAppList", pkgAppList);
         startActivity(intent);
+
+
+
     }
 
     private void minimizeApp() {
@@ -74,26 +88,54 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startStopButton = findViewById(R.id.buttonStart);
         preferences = getSharedPreferences(APP_SET, MODE_PRIVATE);
-        appSet = preferences.getStringSet(APP_SET, new HashSet<>());
+
+        gson = new Gson();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this,RecyclerView.HORIZONTAL, false));
 
         packageManager = getPackageManager();
 
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        pkgAppList = getPackageManager().queryIntentActivities(mainIntent, 0);
-        pkgAppList.sort((o1, o2) -> {
+        recyclerViewAdapter = new RecyclerViewAdapter(this, (selectedApps = new ArrayList<>()));
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        getSelectedApps();
+
+    }
+
+    private void getSelectedApps() {
+
+        appSet = preferences.getStringSet(APP_SET, new HashSet<>());
+        selectedApps.clear();
+        for(String s : appSet){
+            ResolveInfo app = gson.fromJson(s, ResolveInfo.class);
+            selectedApps.add(app);
+        }
+
+        selectedApps.sort((o1, o2) -> {
 
             String app1 = o1.activityInfo.loadLabel(packageManager).toString();
             String app2 = o2.activityInfo.loadLabel(packageManager).toString();
 
             return app1.compareTo(app2);
         });
-//        RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this, pkgAppList);
-//        recyclerView.setAdapter(recyclerViewAdapter);
+
+        recyclerViewAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onStop() {
+        AddAppActivity.save();
+        super.onStop();
     }
 
     private boolean isAccessGranted() {
@@ -125,5 +167,14 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     }
+
+    /**
+     *
+     * TODO:    1) add pop up menu
+     *          2) have its first option as add task which will record the triggers until the icon is clicked again
+     *          3) store the saved trigger sequence in some class(make it)
+     *           Itna kar le fir or likh dunga
+     *
+     */
 
 }

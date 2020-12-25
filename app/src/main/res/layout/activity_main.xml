@@ -19,29 +19,31 @@
             android:id="@+id/text_view_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="App log is:" />
 
         <Button
             android:id="@+id/buttonStart"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:onClick="onOffButton"
-            android:text="START/STOP" />
+            android:text="START Service" />
 
+        <Button
+            android:id="@+id/addApps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onAddAppsClicked"
+            android:layout_margin="10dp"
+            android:text="+ ADD APPS"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayoutMainActivity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/addApps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:onClick="onAddAppsClicked"
-        android:text="+ ADD APPS"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayoutMainActivity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

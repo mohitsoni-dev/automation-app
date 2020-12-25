@@ -1,6 +1,7 @@
 package android.example.checkpoint1;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.LayoutInflater;
@@ -46,6 +47,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.icon.setImageDrawable(app.loadIcon(packageManager));
 
         holder.itemView.setOnClickListener(v -> Toast.makeText(mContext, app.activityInfo.loadLabel(packageManager) + " is Clicked", Toast.LENGTH_SHORT).show());
+
+        if(mContext instanceof AddAppActivity){
+            holder.itemView.setOnClickListener(v -> {
+                Toast.makeText(mContext, holder.label.getText() + " is added.", Toast.LENGTH_SHORT).show();
+                MainActivity.selectedApps.add(app);
+                mList.remove(app);
+                notifyDataSetChanged();
+            });
+        }else if(mContext instanceof MainActivity){
+            holder.itemView.setOnLongClickListener(v ->{
+
+                Toast.makeText(mContext, holder.label.getText() + " is removed.", Toast.LENGTH_SHORT).show();
+                mList.remove(app);
+                notifyDataSetChanged();
+                return true;
+            });
+        }
 
     }
 

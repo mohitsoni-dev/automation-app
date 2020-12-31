@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ public class AddAppActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<ResolveInfo> pkgAppList;
+    private List<ResolveInfo> pkgAppListFiltered;
     private static SharedPreferences.Editor editor;
 
     @Override
@@ -33,7 +35,7 @@ public class AddAppActivity extends AppCompatActivity {
 
         getAppsList();
 
-        recyclerViewAdapter = new RecyclerViewAdapter(this, pkgAppList);
+        recyclerViewAdapter = new RecyclerViewAdapter(this, pkgAppListFiltered);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -42,12 +44,29 @@ public class AddAppActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         pkgAppList = getPackageManager().queryIntentActivities(mainIntent, 0);
+        pkgAppListFiltered = new ArrayList<>();
+        for (ResolveInfo app : pkgAppList) {
+            if (!MainActivity.selectedAppsSet.contains(app.activityInfo.packageName)) {
+                pkgAppListFiltered.add(app);
+            }
+        }
         /**pkgAppList.removeAll(MainActivity.selectedApps);
          *
          * TODO: remove all the apps which are already selected. above method is not working find another
          *
          */
-        pkgAppList.sort((o1, o2) -> {
+//        for (int i = 0; i < pkgAppList.size(); i++) {
+//            for (int j = 0; j < MainActivity.selectedApps.size(); j++) {
+//                String appA = pkgAppList.get(i).activityInfo.packageName;
+//                String appB = MainActivity.selectedApps.get(j).activityInfo.packageName;
+//                if (appA.equals(appB)) {
+//                    pkgAppList.remove(i);
+//                    break;
+//                }
+//            }
+//        }
+
+        pkgAppListFiltered.sort((o1, o2) -> {
 
             String app1 = o1.activityInfo.loadLabel(packageManager).toString();
             String app2 = o2.activityInfo.loadLabel(packageManager).toString();

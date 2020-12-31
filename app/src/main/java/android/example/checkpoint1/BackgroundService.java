@@ -5,14 +5,17 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -83,7 +86,7 @@ public class BackgroundService extends Service {
             currentApp = name;
 
         Intent intent = new Intent(this, FloatingWindow.class);
-        if (currentApp.equals("com.google.android.youtube")) {
+        if (MainActivity.selectedAppsSet.contains(currentApp)) {
             if (!prevApp.equals(currentApp)) {
                 intent.putExtra("Called", true);
                 this.startService(intent);
@@ -99,5 +102,12 @@ public class BackgroundService extends Service {
 
         if(i<10000)
             h.postDelayed(()-> helper(), 1000);
+    }
+
+    private boolean checkIfSelected(String currentApp) {
+        for (ResolveInfo app : MainActivity.selectedApps) {
+            if (app.activityInfo.packageName.equals(currentApp)) return true;
+        }
+        return false;
     }
 }

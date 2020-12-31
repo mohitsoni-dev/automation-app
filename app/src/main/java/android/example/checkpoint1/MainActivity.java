@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
     public static PackageManager packageManager;
     public static Gson gson;
     public static Set<String> appSet;
+    public static Set<String> selectedAppsSet;
     public static SharedPreferences preferences;
     public static List<ResolveInfo> selectedApps;
 
@@ -109,9 +110,11 @@ public class MainActivity extends AppCompatActivity{
 
         appSet = preferences.getStringSet(APP_SET, new HashSet<>());
         selectedApps.clear();
+        selectedAppsSet = new HashSet<>();
         for(String s : appSet){
             ResolveInfo app = gson.fromJson(s, ResolveInfo.class);
             selectedApps.add(app);
+            selectedAppsSet.add(app.activityInfo.packageName);
         }
 
         selectedApps.sort((o1, o2) -> {

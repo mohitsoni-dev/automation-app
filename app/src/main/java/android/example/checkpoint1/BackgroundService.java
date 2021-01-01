@@ -54,25 +54,20 @@ public class BackgroundService extends Service {
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
         String name = "";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
-                    time - 1000 * 1000, time);
-            if (appList != null && appList.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                for (UsageStats usageStats : appList) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(),
-                            usageStats);
-                }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                    name = mySortedMap.get(
-                            mySortedMap.lastKey()).getPackageName();
-                }
+        UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+        long time = System.currentTimeMillis();
+        List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,
+                time - 1000 * 1000, time);
+        if (appList != null && appList.size() > 0) {
+            SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+            for (UsageStats usageStats : appList) {
+                mySortedMap.put(usageStats.getLastTimeUsed(),
+                        usageStats);
             }
-        } else {
-            am = (ActivityManager) getBaseContext().getSystemService(ACTIVITY_SERVICE);
-            name = am.getRunningTasks(1).get(0).topActivity .getPackageName();
+            if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                name = mySortedMap.get(
+                        mySortedMap.lastKey()).getPackageName();
+            }
         }
 
         if (!names.contains(name)){

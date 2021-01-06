@@ -9,11 +9,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -143,7 +145,21 @@ public class FloatingWindow extends Service {
 
                         if(Math.abs(initialTouchX - event.getRawX()) <= 2 && Math.abs(initialTouchY - event.getRawY()) <=2 && !longPressed){
                             Log.d("ICON TOuched", "TOUCHED");
-                            Toast.makeText(getApplicationContext(), BackgroundService.currentApp, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), BackgroundService.currentApp, Toast.LENGTH_SHORT).show();
+                            //Creating the instance of PopupMenu
+                            PopupMenu popup = new PopupMenu(getApplicationContext(), ivWidget);
+                            //Inflating the Popup using xml file
+                            popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+                            //registering popup with OnMenuItemClickListener
+                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    Toast.makeText(getApplicationContext(), "You clicket" + item.getTitle(), Toast.LENGTH_SHORT).show();
+                                    return true;
+                                }
+                            });
+                            // showing popup menu
+                            popup.show();
                         }
                         longPressed = false;
 

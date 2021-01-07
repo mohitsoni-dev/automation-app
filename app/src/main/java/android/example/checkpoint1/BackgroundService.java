@@ -3,6 +3,7 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -25,7 +26,7 @@ public class BackgroundService extends Service {
     Handler h;
     int i = 0;
     public static String prevApp = "";
-
+    public static ResolveInfo currentAppResolverInfo;
     public static List<String> names = new ArrayList<>();
     public static String currentApp = "";
     @Override
@@ -51,7 +52,7 @@ public class BackgroundService extends Service {
 
     public void helper () {
         i++;
-        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
         String name = "";
         UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
@@ -81,7 +82,7 @@ public class BackgroundService extends Service {
             currentApp = name;
 
         Intent intent = new Intent(this, FloatingWindow.class);
-        if (MainActivity.selectedAppsSet.contains(currentApp)) {
+        if (checkIfSelected(currentApp)) {
             if (!prevApp.equals(currentApp)) {
                 intent.putExtra("Called", true);
                 this.startService(intent);
@@ -101,7 +102,10 @@ public class BackgroundService extends Service {
 
     private boolean checkIfSelected(String currentApp) {
         for (ResolveInfo app : MainActivity.selectedApps) {
-            if (app.activityInfo.packageName.equals(currentApp)) return true;
+            if (app.activityInfo.packageName.equals(currentApp)) {
+                currentAppResolverInfo = app;
+                return true;
+            }
         }
         return false;
     }

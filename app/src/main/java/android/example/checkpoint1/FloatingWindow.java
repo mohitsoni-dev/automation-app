@@ -149,12 +149,14 @@ public class FloatingWindow extends Service {
                             //Creating the instance of PopupMenu
                             PopupMenu popup = new PopupMenu(getApplicationContext(), ivWidget);
                             //Inflating the Popup using xml file
-                            popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+//                            popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+                            popup.getMenu().add("Menu:");
+                            popup.getMenu().add(BackgroundService.currentAppResolverInfo.activityInfo.name);
                             //registering popup with OnMenuItemClickListener
                             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
-                                    Toast.makeText(getApplicationContext(), "You clicket" + item.getTitle(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "You clicked" + item.getTitle(), Toast.LENGTH_SHORT).show();
                                     return true;
                                 }
                             });
